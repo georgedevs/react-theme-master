@@ -18,6 +18,7 @@ A powerful, flexible theme management system for React applications with Tailwin
 - **Theme Scheduling**: Change themes based on time of day
 - **Persistence Options**: Store preferences in local or session storage
 - **Smooth Transitions**: Configurable animations between themes
+- **Framework Compatible**: Works with Next.js, Create React App, Vite, and more
 
 ## Installation
 
@@ -55,6 +56,83 @@ export default function ThemedApp() {
     <ThemeProvider>
       <App />
     </ThemeProvider>
+  );
+}
+```
+
+## Framework Setup
+
+### Tailwind CSS Configuration
+
+To prevent Tailwind from purging theme-related classes in production builds, add the safelist to your `tailwind.config.js`:
+
+```js
+// tailwind.config.js
+import { generateSafelist } from 'react-theme-master';
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    // Your content paths
+  ],
+  safelist: generateSafelist(), // This preserves all theme classes
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+```
+
+For custom themes, pass them to the safelist generator:
+
+```js
+safelist: generateSafelist({
+  myCustomTheme: {
+    colors: {
+      primary: 'bg-amber-800',
+      secondary: 'bg-amber-700',
+      // other color properties
+    }
+  }
+})
+```
+
+### Next.js Setup
+
+React Theme Master works with Next.js App Router. All components are already properly marked with "use client" directives.
+
+1. Create a theme provider component in your app:
+
+```jsx
+// app/providers.jsx
+"use client";
+
+import { ThemeProvider } from 'react-theme-master';
+
+export function Providers({ children }) {
+  return (
+    <ThemeProvider>
+      {children}
+    </ThemeProvider>
+  );
+}
+```
+
+2. Use it in your layout:
+
+```jsx
+// app/layout.jsx
+import { Providers } from './providers';
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        <Providers>
+          {children}
+        </Providers>
+      </body>
+    </html>
   );
 }
 ```
@@ -182,6 +260,18 @@ const myThemes = {
 </ThemeProvider>
 ```
 
+Don't forget to update your Tailwind safelist when adding custom themes:
+
+```js
+// tailwind.config.js
+import { generateSafelist } from 'react-theme-master';
+
+module.exports = {
+  // ... other config
+  safelist: generateSafelist(myThemes),
+}
+```
+
 ## Advanced Options
 
 ### Theme Scheduling
@@ -306,6 +396,10 @@ import {
   // CSS variable management
   applyThemeToCssVars,
   setupThemeTransition,
+  
+  // Tailwind safelist
+  generateSafelist,
+  extractThemeClasses,
 } from 'react-theme-master';
 
 // Example: Manually get stored theme
