@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { ThemeToggleProps } from '../types';
 import { useTheme } from '../hooks/useTheme';

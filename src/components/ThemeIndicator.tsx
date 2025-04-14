@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { ThemeIndicatorProps } from '../types';
 import { useTheme } from '../hooks/useTheme';

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { createContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { 
   Theme, 

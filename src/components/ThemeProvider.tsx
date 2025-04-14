@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { ThemeProviderProps } from '../types';
 import { ThemeProvider as ContextProvider } from '../context/ThemeContext';
