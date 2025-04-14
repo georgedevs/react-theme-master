@@ -71,7 +71,7 @@ To prevent Tailwind from purging theme-related classes in production builds, add
 import { generateSafelist } from 'react-theme-master';
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     // Your content paths
   ],
@@ -83,19 +83,7 @@ module.exports = {
 };
 ```
 
-For custom themes, pass them to the safelist generator:
-
-```js
-safelist: generateSafelist({
-  myCustomTheme: {
-    colors: {
-      primary: 'bg-amber-800',
-      secondary: 'bg-amber-700',
-      // other color properties
-    }
-  }
-})
-```
+That's it! The `generateSafelist()` function will include all necessary CSS classes for both built-in and custom themes.
 
 ### Next.js Setup
 
@@ -260,18 +248,6 @@ const myThemes = {
 </ThemeProvider>
 ```
 
-Don't forget to update your Tailwind safelist when adding custom themes:
-
-```js
-// tailwind.config.js
-import { generateSafelist } from 'react-theme-master';
-
-module.exports = {
-  // ... other config
-  safelist: generateSafelist(myThemes),
-}
-```
-
 ## Advanced Options
 
 ### Theme Scheduling
@@ -399,7 +375,6 @@ import {
   
   // Tailwind safelist
   generateSafelist,
-  extractThemeClasses,
 } from 'react-theme-master';
 
 // Example: Manually get stored theme

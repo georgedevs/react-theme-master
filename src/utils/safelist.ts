@@ -28,32 +28,47 @@ const utilityClasses = [
   
   // Padding classes
   'p-1.5', 'p-2', 'p-3', 'p-4', 'p-6',
-  'px-3', 'py-2', 'py-8',
+  'px-3', 'py-2',
   
   // Text size classes
-  'text-sm', 'text-base', 'text-lg', 'text-xl', 'text-2xl',
+  'text-sm', 'text-base', 'text-lg',
   
   // Flexbox classes
-  'flex', 'flex-col', 'items-center', 'justify-center', 'gap-1', 'gap-2', 'gap-4',
+  'flex', 'items-center', 'gap-2',
   
   // Spacing classes
-  'mt-1', 'mb-1', 'mb-2', 'mb-4', 'mb-8',
+  'mt-1', 'mb-1',
   
   // Border/Rounded classes
   'rounded', 'rounded-lg', 'rounded-full',
   
   // Misc utilities
-  'z-10', 'z-50', 'w-full', 'h-full', 'overflow-hidden',
+  'z-10', 'z-50', 
   'transition-colors', 'transition-transform', 'duration-200'
 ];
 
 /**
- * Complete safelist for Tailwind CSS
- * Combines theme classes and utility classes
+ * Generate a safelist for Tailwind CSS
+ * 
+ * This function extracts all CSS classes used in themes and combines them
+ * with utility classes needed by the components. The result can be used
+ * in your Tailwind config to prevent classes from being purged.
+ * 
+ * @returns {string[]} Array of CSS classes to be included in Tailwind safelist
+ * 
+ * @example
+ * ```javascript
+ * // tailwind.config.js
+ * import { generateSafelist } from 'react-theme-master';
+ * 
+ * module.exports = {
+ *   // other config...
+ *   safelist: generateSafelist(),
+ * }
+ * ```
  */
-export const generateSafelist = (additionalThemes = {}): string[] => {
-  const allThemes = { ...defaultThemes, ...additionalThemes };
-  return [...extractThemeClasses(allThemes), ...utilityClasses];
+export const generateSafelist = (): string[] => {
+  return [...extractThemeClasses(), ...utilityClasses];
 };
 
 export default generateSafelist;
