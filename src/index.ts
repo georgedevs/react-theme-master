@@ -54,6 +54,12 @@ export {
     createSystemThemeListener
   } from './utils/systemTheme';
   
+  // Export Tailwind safelist utility
+  export {
+    generateSafelist,
+    extractThemeClasses
+  } from './utils/safelist';
+  
   // Export built-in themes
   export {
     defaultThemes,
