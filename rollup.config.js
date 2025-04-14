@@ -1,3 +1,4 @@
+// rollup.config.js
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from 'rollup-plugin-typescript2';
@@ -27,8 +28,14 @@ export default {
     commonjs(),
     typescript({
       tsconfig: './tsconfig.json',
-      useTsconfigDeclarationDir: true,
       clean: true,
+      tsconfigOverride: {
+        compilerOptions: {
+          declaration: true,
+          declarationDir: 'dist',
+        },
+        exclude: ['**/__tests__', '**/*.test.ts', '**/*.test.tsx']
+      }
     }),
     terser(), // Minify the output
   ],
