@@ -66,6 +66,68 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   if (Object.keys(allThemes).length === 0) {
     console.warn('No valid themes provided. Using default themes.');
   }
+
+  // Prevent flash of incorrect theme on page refresh
+  useEffect(() => {
+    // Only run in browser and only once
+    if (isBrowser && !document.getElementById('theme-preload-style')) {
+      // Get the initial theme - check storage first
+      const storedTheme = loadThemeFromStorage(storageKey, storageType);
+      
+      // Determine the initial theme based on priority:
+      // 1. Stored theme
+      // 2. System preference (if enabled)
+      // 3. initialTheme from options
+      // 4. fallbackTheme
+      let initialThemeName = storedTheme;
+      
+      if (!initialThemeName && followSystemPreference) {
+        const systemTheme = getSystemTheme();
+        if (allThemes[systemTheme]) {
+          initialThemeName = systemTheme;
+        }
+      }
+      
+      if (!initialThemeName && initialTheme && allThemes[initialTheme]) {
+        initialThemeName = initialTheme;
+      }
+      
+      if (!initialThemeName || !allThemes[initialThemeName]) {
+        initialThemeName = fallbackTheme;
+      }
+      
+      // Get the actual theme object
+      const theme = allThemes[initialThemeName];
+      
+      if (theme) {
+        // Create stylesheet with CSS variables
+        const style = document.createElement('style');
+        style.id = 'theme-preload-style';
+        
+        // Add CSS variables based on theme
+        let css = `:root {`;
+        Object.entries(theme.colors).forEach(([key, value]) => {
+          // Extract color value from Tailwind class if possible
+          const colorValue = value.replace(/^(bg|text|border|shadow)-/, '');
+          css += `--theme-${key}: ${colorValue};`;
+        });
+        css += `}\n`;
+        
+        // Set data-theme attribute for CSS selectors
+        document.documentElement.setAttribute('data-theme', initialThemeName);
+        
+        // Add dark class for Tailwind if it's a dark theme
+        if (initialThemeName === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        
+        style.innerHTML = css;
+        document.head.appendChild(style);
+      }
+    }
+  }, []); // Empty dependency array - run once on mount
   
   // Get initial theme - priority: storage > system > initial > fallback
   const getInitialTheme = (): string => {
@@ -198,9 +260,22 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   // Apply theme to document when it changes
   useEffect(() => {
     if (isBrowser && themeObject) {
+      // Remove the preload style once the actual theme is applied
+      const preloadStyle = document.getElementById('theme-preload-style');
+      if (preloadStyle) {
+        document.head.removeChild(preloadStyle);
+      }
+      
       applyThemeToCssVars(themeObject);
+      
+      // Update dark class for Tailwind
+      if (safeThemeName === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     }
-  }, [themeObject]);
+  }, [themeObject, safeThemeName]);
   
   // Listen for system preference changes
   useEffect(() => {
